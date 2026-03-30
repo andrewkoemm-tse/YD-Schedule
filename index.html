@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Molding Schedule Display</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: #fff;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 48px;
+      margin-bottom: 20px;
+      text-align: center;
+      color: #00adee;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 26px;
+    }
+
+    th {
+      background: #333;
+      padding: 14px;
+      text-align: left;
+      font-size: 30px;
+      border-bottom: 3px solid #555;
+    }
+
+    td {
+      padding: 12px;
+      border-bottom: 1px solid #444;
+    }
+
+    tr:nth-child(even) {
+      background: #1a1a1a;
+    }
+
+    tr:nth-child(odd) {
+      background: #222;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>Molding Schedule</h1>
+
+<table id="data-table"></table>
+
+<!-- Embedded PapaParse (minified) -->
+<script>
+/*! papaparse.min.js (embedded for offline use) */
+(function(a){function b(a,b){var c=Object.keys(a);if(Object.getOwnPropertySymbols){var d=Object.getOwnPropertySymbols(a);b&&(d=d.filter(function(b){return Object.getOwnPropertyDescriptor(a,b).enumerable})),c.push.apply(c,d)}return c}function c(a){for(var c=1;c<arguments.length;c++){var d=null!=arguments[c]?arguments[c]:{};c%2?b(Object(d),!0).forEach(function(b){e(a,b,d[b])}):Object.getOwnPropertyDescriptors?Object.defineProperties(a,Object.getOwnPropertyDescriptors(d)):b(Object(d)).forEach(function(b){Object.defineProperty(a,b,Object.getOwnPropertyDescriptor(d,b))})}return a}function d(a){return Array.isArray(a)?a:Array.from(a)}function e(a,b,c){return b in a?Object.defineProperty(a,b,{value:c,enumerable:!0,configurable:!0,writable:!0}):a[b]=c,a}var f={parse:function(a,b){b=b||{};var c=a.split(/\r\n|\n|\r/),d=[];for(var e=0;e<c.length;e++){var f=c[e],g=[],h="",i=!1;for(var j=0;j<f.length;j++){var k=f[j];if('"'===k)if(i&&'"'===f[j+1])h+='"',j++;else i=!i;else","===k&&!i?(g.push(h),h=""):h+=k}g.push(h),d.push(g)}return{data:d}}};"object"==typeof module&&"object"==typeof module.exports?module.exports=f:a.Papa=f})(this);
+</script>
+
+<script>
+async function loadCSV() {
+  try {
+    const response = await fetch("https://tseindustries.sharepoint.com/sites/YoDeck/WHK%201%20Schedule/Molding%20Schedule%28For%20TV%29.csv");
+    const text = await response.text();
+
+    const parsed = Papa.parse(text).data;
+
+    const table = document.getElementById("data-table");
+
+    // Remove empty rows
+    const rows = parsed.filter(r => r.some(cell => cell.trim() !== ""));
+
+    // Header
+    const headerRow = document.createElement("tr");
+    rows[0].forEach(col => {
+      const th = document.createElement("th");
+      th.textContent = col;
+      headerRow.appendChild(th);
+    });
+    table.appendChild(headerRow);
+
+    // Data rows
+    for (let i = 1; i < rows.length; i++) {
+      const tr = document.createElement("tr");
+      rows[i].forEach(col => {
+        const td = document.createElement("td");
+        td.textContent = col;
+        tr.appendChild(td);
+      });
+      table.appendChild(tr);
+    }
+
+  } catch (err) {
+    console.error("Error loading CSV:", err);
+  }
+}
+
+loadCSV();
+</script>
+
+</body>
+</html>
